@@ -1,0 +1,227 @@
+L23 Commands (Valkyrie)
+==========================================
+
+Chassis Commands
+---------------------
+
+``C_LOGON``
+^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: shell
+
+    # set
+    C_LOGON <password>
+
+:Description:
+    You log on to the chassis by setting the parameter of this command to the correct password for the chassis. All other commands will fail if the session has not been logged on.
+
+:Actions:
+    set
+
+:Parameter:
+    ``password: <string>``, password for creating a tester management session and logging on to the tester.
+
+:Example:
+    .. code-block:: shell
+
+        # set
+        input:  C_LOGON "xena"
+        output: <OK>
+
+
+``C_OWNER``
+^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: shell
+
+    # set
+    C_OWNER <username>
+
+    # get
+    C_OWNER ?
+
+:Description:
+    Identify the owner of the management session. The name can be any short quoted
+    string up to eight characters long. This name will be used when reserving ports
+    prior to updating their configuration. There is no authentication of the users,
+    and the chassis does not have any actual user accounts. Multiple concurrent
+    connections may use the same owner name, but only one connection can have any
+    particular resource reserved at any given time. Until an owner is specified the
+    chassis configuration can only be read. Once specified, the session can reserve
+    ports for that owner, and will inherit any existing reservations for that owner
+    retained at the chassis. Maximum 32 ASCII characters.
+
+:Actions:
+    set, get
+
+:Parameter:
+    ``username: <string>``, the username of this chassis management session.
+
+:Example:
+    .. code-block:: shell
+
+        # set
+        input:  C_OWNER "alice"
+        output: <OK>
+
+        # get
+        input:  C_OWNER ?
+        output: C_OWNER "alice"
+
+
+``C_KEEPALIVE``
+^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: shell
+
+    # get
+    C_KEEPALIVE ?
+
+:Description:
+    You can request this parameter from the chassis, simply to let it (as well as and
+    any routers and proxies between you) know that the connection is still valid.
+
+:Actions:
+    get
+
+:Parameter:
+    ``tick_count: <int>``, an increasing number from the chassis.
+
+:Example:
+    .. code-block:: shell
+
+        # get
+        input:  C_KEEPALIVE ?
+        output: C_KEEPALIVE 12345
+
+
+Module Commands
+---------------------
+
+``M_RESERVATION``
+^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: shell
+
+    # set
+    <module-index> M_RESERVATION <operation>
+
+    # get
+    <module-index> M_RESERVATION ?
+
+:Description:
+    Set this command to reserve, release, or relinquish a module itself (as
+    opposed to its ports). The module must be reserved before its hardware image can
+    be upgraded. The owner of the session must already have been specified.
+    Reservation will fail if the chassis or any ports are reserved for other users.
+
+:Actions:
+    set, get
+
+:Parameter:
+    ``operation: <byte>``, containing the operation to perform. ``[RELEASE (0) | RESERVE (1) | RELINQUISH (2)]``. The reservation commands are asymmetric with respect to set/get. When set, it contains the operation to perform. When get, it contains the status ``[ RELEASED (0) | RESERVED_BY_YOU (1) | RESERVED_BY_OTHER (2) ]``.
+
+:Example:
+    .. code-block:: shell
+
+        # set
+        input:  0 M_RESERVATION M_RESERVATION
+        output: <OK>
+
+        # get
+        input:  0 M_RESERVATION ?
+        output: 0 M_RESERVATION RESERVED_BY_YOU
+
+
+Port Commands
+---------------------
+
+``P_SPEEDREDUCTION``
+^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: shell
+
+    # set
+    <module-index>/<port-index> P_SPEEDREDUCTION <ppm>
+
+    # get
+    <module-index>/<port-index> P_SPEEDREDUCTION ?
+
+:Description:
+    A speed reduction applied to the transmitting side of a port, resulting in an
+    effective traffic rate that is slightly lower than the rate of the physical
+    interface. Speed reduction is effectuated by inserting short idle periods in the
+    generated traffic pattern to consume part of the port's physical bandwidth. The
+    port's clock speed is not altered.
+
+:Actions:
+    set, get
+
+:Parameter:
+    ``ppm: <int>``, specifying the speed reduction in units of parts-per-million.
+
+:Example:
+    .. code-block:: shell
+
+        # set
+        input:  0/1 P_SPEEDREDUCTION 100
+        output: <OK>
+
+        # get
+        input:  0/1 P_SPEEDREDUCTION ?
+        output: 0/1 P_SPEEDREDUCTION 100
+
+
+Stream Commands
+---------------------
+
+``PS_COMMENT``
+^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: shell
+
+    # set
+    <module-index>/<port-index> PS_COMMENT <[stream-index]> <comment>
+
+    # get
+    <module-index>/<port-index> PS_COMMENT <[stream-index]> ?
+
+:Description:
+    The description of a stream.
+
+:Actions:
+    set, get
+
+:Parameter:
+    ``comment: <string>``, specifying the description of a stream.
+
+:Example:
+    .. code-block:: shell
+
+        # set
+        input:  0/1 PS_COMMENT [0] "this is comment"
+        output: <OK>
+
+        # get
+        input:  0/1 PS_COMMENT [0] ?
+        output: 0/1 PS_COMMENT [0] "this is comment"
+
+
+Filter Commands
+---------------------
+
+
+Capture Commands
+---------------------
+
+
+Statistics Commands
+---------------------
+
+
+Histogram Commands
+---------------------
+
+
+High-Speed Port Commands
+--------------------------

@@ -1,2 +1,2 @@
-# xena-open-automation-cli-doc
-Xena OpenAutomation CLI Command Reference
+# xena-open-automation-cli
+Xena OpenAutomation CLI 
