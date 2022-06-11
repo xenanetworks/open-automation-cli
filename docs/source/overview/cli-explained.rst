@@ -1,7 +1,7 @@
-CLI Explained
+XOA CLI Explained
 ==========================================
 
-The CLI commands are simple lines of text exchanged between a client and the chassis. An example command to the chassis could be:
+The XOA CLI commands are simple lines of text exchanged between a client and the chassis. An example command to the chassis could be:
 
 .. code-block::
     :linenos:
