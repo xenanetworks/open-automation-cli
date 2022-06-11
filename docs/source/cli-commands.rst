@@ -1,7 +1,7 @@
 .. _cli_cmd_ref:
 
 ***********************
-CLI Commands
+CLI Documentation
 ***********************
 
 

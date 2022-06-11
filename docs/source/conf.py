@@ -17,18 +17,42 @@ sys.path.insert(0, os.path.abspath('../../'))
 
 # import pkg_resources
 
+import codecs
+import os.path
+
+def read(rel_path):
+    here = os.path.abspath(os.path.dirname(__file__))
+    with codecs.open(os.path.join(here, rel_path), 'r') as fp:
+        return fp.read()
+
+def get_version(rel_path):
+    for line in read(rel_path).splitlines():
+        if line.startswith('__version__'):
+            delim = '"' if '"' in line else "'"
+            return line.split(delim)[1]
+    else:
+        raise RuntimeError("Unable to find version string.")
+
+def get_short_version(rel_path):
+    for line in read(rel_path).splitlines():
+        if line.startswith('__short_version__'):
+            delim = '"' if '"' in line else "'"
+            return line.split(delim)[1]
+    else:
+        raise RuntimeError("Unable to find version string.")
 
 # -- Project information -----------------------------------------------------
 
-project = u'Xena OpenAutomation CLI Command Reference'
+project = u'Xena OpenAutomation CLI Command'
 copyright = u'2022, Xena Networks'
 author = u'Xena Networks'
-title = u'Xena OpenAutomation CLI Command Reference'
+title = u'Xena OpenAutomation CLI Command Documentation'
 
 # The full version, including alpha/beta/rc tags.
-release = '1.0b1'
+release = get_version("../../xoa_cli/__init__.py")
+
 # The short X.Y version.
-version = '1.0'
+version = get_short_version("../../xoa_cli/__init__.py")
 
 
 # -- General configuration -----------------------------------------------------
@@ -45,7 +69,9 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.viewcode',
     'sphinx.ext.todo',
-    'sphinx.ext.autosectionlabel'
+    'sphinx.ext.autosectionlabel',
+    'sphinx.ext.extlinks',
+    "sphinx_inline_tabs",
 ]
 add_module_names = False
 autodoc_default_options = {
@@ -123,7 +149,7 @@ intersphinx_disabled_domains = ['std']
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'xoa_cli_doc', title, author, 'xoa_cli_doc', 'Xena OpenAutomation CLI Command Reference.', 'Miscellaneous'),
+    (master_doc, 'xoa_cli_doc', title, author, 'xoa_cli_doc', 'Xena OpenAutomation CLI Reference.', 'Miscellaneous'),
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -137,7 +163,7 @@ latex_elements = {
 'papersize': 'a4paper',
 
 # The font size ('10pt', '11pt' or '12pt').
-'pointsize': '10pt',
+'pointsize': '12pt',
 
 # Additional stuff for the LaTeX preamble.
 # 'preamble': '',
@@ -156,7 +182,7 @@ latex_documents = [(master_doc, 'xoa_cli_doc.tex', title, author, 'manual'),
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
-# latex_logo = './_static/...png'
+latex_logo = './_static/pdf_logo.png'
 
 # -- Options for manual page output -----------------------------------------------------
 

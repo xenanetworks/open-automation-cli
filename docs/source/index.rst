@@ -1,4 +1,4 @@
-Xena OpenAutomation CLI Command Reference
+Xena OpenAutomation CLI Command Documentation
 =====================================================
 
 .. todo::
