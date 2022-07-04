@@ -72,6 +72,8 @@ extensions = [
     'sphinx.ext.autosectionlabel',
     'sphinx.ext.extlinks',
     "sphinx_inline_tabs",
+    'sphinx_copybutton',
+    "sphinx_remove_toctrees",
 ]
 add_module_names = False
 autodoc_default_options = {
@@ -104,7 +106,7 @@ templates_path = ['_templates']
 # -- Options for HTML output -----------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_book_theme'
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'xoa_cli_doc'
@@ -114,7 +116,7 @@ htmlhelp_basename = 'xoa_cli_doc'
 html_title = title
 
 # The path to the HTML logo image in the static path, or URL to the logo, or ''.
-html_logo = './_static/xena_xoa_logo_white.png'
+html_logo = './_static/xoa_logo.png'
 
 html_favicon = './_static/xoa_favicon_16.png'
 
@@ -128,7 +130,12 @@ html_show_copyright = True
 html_show_sphinx = False
 
 html_theme_options = {
-    'style_nav_header_background': '#336851'
+    "repository_url": "https://github.com/xenanetworks/open-automation-cli",
+    "use_repository_button": True,
+    "home_page_in_toc": True,
+    "show_toc_level": 2,
+    "use_download_button": True,
+    "show_navbar_depth": 2,
 }
 
 html_split_index = True
