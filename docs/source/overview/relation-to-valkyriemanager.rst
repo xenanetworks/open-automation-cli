@@ -24,4 +24,4 @@ Also, the Manager will disable the user-interface whenever a particular operatio
 
 At a more fundamental level, the Manager supports the notion of a testbed containing multiple chassis. This is not applicable through scripting since each scripting session runs through its own connection to a single chassis, and indeed the chassis are not aware of each other. Any cross-chassis control must be handled at the scripting client environment; in particular cross-chassis statistics such as packet loss.
 
-In contrast, the CLI environment provides :ref:`wildcarding <Overview:Defaults and Wildcarding>` across modules and ports, which is not available through the Manager.
+In contrast, the CLI environment provides `wildcarding <Defaults and Wildcarding>`_ across modules and ports, which is not available through the Manager.

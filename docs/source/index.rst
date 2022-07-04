@@ -1,3 +1,4 @@
+=====================================================
 Xena OpenAutomation CLI Command Documentation
 =====================================================
 
@@ -8,12 +9,11 @@ Xena OpenAutomation CLI Command Documentation
 -----------
 
 .. toctree::
-   :maxdepth: 4
-   :numbered: 3
+   :maxdepth: 1
    :caption: Table of Contents
 
-   overview
-   cli-commands
+   overview/index
+   cli-commands/index
 
 
 

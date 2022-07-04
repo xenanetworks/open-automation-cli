@@ -133,9 +133,9 @@ html_theme_options = {
     "repository_url": "https://github.com/xenanetworks/open-automation-cli",
     "use_repository_button": True,
     "home_page_in_toc": True,
-    "show_toc_level": 2,
+    "show_toc_level": 3,
     "use_download_button": True,
-    "show_navbar_depth": 2,
+    "show_navbar_depth": 3,
 }
 
 html_split_index = True
@@ -203,7 +203,7 @@ man_pages = [
 # -- Options for EPUB output -----------------------------------------------------
 epub_title = title + ' ' + release
 epub_author = author
-epub_publisher = 'http://xenanetworks.com'
+epub_publisher = 'https://xenanetworks.com'
 epub_copyright = copyright
 epub_show_urls = 'footnote'
 epub_basename = 'xoa_cli_doc'
