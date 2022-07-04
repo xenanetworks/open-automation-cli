@@ -4,6 +4,7 @@
 sphinx==4.4.0
 sphinx_rtd_theme
 readthedocs-sphinx-search
+sphinx-inline-tabs
 sphinx-book-theme
 sphinx-copybutton
 sphinx-remove-toctrees
