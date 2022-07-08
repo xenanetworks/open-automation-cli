@@ -7,7 +7,7 @@ Chassis Commands
 ``C_LOGON``
 ^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: shell
+.. code-block::
 
     # set
     C_LOGON <password>
@@ -19,10 +19,10 @@ Chassis Commands
     set
 
 :Parameter:
-    ``password: <string>``, password for creating a tester management session and logging on to the tester.
+    ``password: string``, password for creating a tester management session and logging on to the tester.
 
 :Example:
-    .. code-block:: shell
+    .. code-block::
 
         # set
         input:  C_LOGON "xena"
@@ -32,7 +32,7 @@ Chassis Commands
 ``C_OWNER``
 ^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: shell
+.. code-block::
 
     # set
     C_OWNER <username>
@@ -55,10 +55,10 @@ Chassis Commands
     set, get
 
 :Parameter:
-    ``username: <string>``, the username of this chassis management session.
+    ``username: string``, the username of this chassis management session.
 
 :Example:
-    .. code-block:: shell
+    .. code-block::
 
         # set
         input:  C_OWNER "alice"
@@ -72,7 +72,7 @@ Chassis Commands
 ``C_KEEPALIVE``
 ^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: shell
+.. code-block::
 
     # get
     C_KEEPALIVE ?
@@ -85,10 +85,10 @@ Chassis Commands
     get
 
 :Parameter:
-    ``tick_count: <int>``, an increasing number from the chassis.
+    ``tick_count: integer``, an increasing number from the chassis.
 
 :Example:
-    .. code-block:: shell
+    .. code-block::
 
         # get
         input:  C_KEEPALIVE ?
@@ -101,7 +101,7 @@ Module Commands
 ``M_RESERVATION``
 ^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: shell
+.. code-block::
 
     # set
     <module-index> M_RESERVATION <operation>
@@ -121,8 +121,16 @@ Module Commands
 :Parameter:
     ``operation: <byte>``, containing the operation to perform. ``[RELEASE (0) | RESERVE (1) | RELINQUISH (2)]``. The reservation commands are asymmetric with respect to set/get. When set, it contains the operation to perform. When get, it contains the status ``[ RELEASED (0) | RESERVED_BY_YOU (1) | RESERVED_BY_OTHER (2) ]``.
 
+        * ``RELEASE = 0``
+        * ``RESERVE = 1``
+        * ``RELINQUISH = 1``
+
+        * ``RELEASED = 0``
+        * ``RESERVED_BY_YOU = 1``
+        * ``RESERVED_BY_OTHER = 1``
+
 :Example:
-    .. code-block:: shell
+    .. code-block::
 
         # set
         input:  0 M_RESERVATION M_RESERVATION
@@ -139,7 +147,7 @@ Port Commands
 ``P_SPEEDREDUCTION``
 ^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: shell
+.. code-block::
 
     # set
     <module-index>/<port-index> P_SPEEDREDUCTION <ppm>
@@ -158,10 +166,10 @@ Port Commands
     set, get
 
 :Parameter:
-    ``ppm: <int>``, specifying the speed reduction in units of parts-per-million.
+    ``ppm: integer``, specifying the speed reduction in units of parts-per-million.
 
 :Example:
-    .. code-block:: shell
+    .. code-block::
 
         # set
         input:  0/1 P_SPEEDREDUCTION 100
@@ -178,13 +186,13 @@ Stream Commands
 ``PS_COMMENT``
 ^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: shell
+.. code-block::
 
     # set
-    <module-index>/<port-index> PS_COMMENT <[stream-index]> <comment>
+    <module-index>/<port-index> PS_COMMENT [<stream-index>] <comment>
 
     # get
-    <module-index>/<port-index> PS_COMMENT <[stream-index]> ?
+    <module-index>/<port-index> PS_COMMENT [<stream-index>] ?
 
 :Description:
     The description of a stream.
@@ -193,10 +201,10 @@ Stream Commands
     set, get
 
 :Parameter:
-    ``comment: <string>``, specifying the description of a stream.
+    ``comment: string``, specifying the description of a stream.
 
 :Example:
-    .. code-block:: shell
+    .. code-block::
 
         # set
         input:  0/1 PS_COMMENT [0] "this is comment"
@@ -225,3 +233,69 @@ Histogram Commands
 
 High-Speed Port Commands
 --------------------------
+
+``PP_AUTONEGSTATUS``
+^^^^^^^^^^^^^^^^^^^^
+
+.. code-block::
+
+    # set
+    <module-index>/<port-index> PP_AUTONEGSTATUS <mode> <fec> <auto_state> <tec_ability> <fec_capable> <fec_requested> <pause_mode>
+
+    # get
+    <module-index>/<port-index> PP_AUTONEGSTATUS ?
+
+:Description:
+    Status of auto-negotiation settings of the PHY - for Thor-400G-7S-1P[b] and [c].
+
+:Actions:
+    set, get
+
+:Parameter:
+    ``mode: integer``, mode.
+
+        * ``ANEG_OFF = 0``
+        * ``ANEG_ON = 1``
+
+    ``fec: integer``, FEC.
+
+        * ``PENDING = 0``
+        * ``NOFEC = 1``
+        * ``RS_FEC = 513``
+        * ``FC_FEC = 257``
+
+    ``auto_state: integer``, auto negotiation state.
+
+        * ``UNKNOWN = 0``
+        * ``ENABLE = 1``
+        * ``TRANSMIT_DISABLE = 2``
+        * ``ABILITY_DETECT = 3``
+        * ``ACKNOWLEDGE_DETECT = 4``
+        * ``COMPLETE_ACKNOWLEDGE = 5``
+        * ``NEXT_PAGE_WAIT = 6``
+        * ``AN_GOOD_CHECK = 7``
+        * ``AN_GOOD = 8``
+
+    ``tec_ability: integer``, technical ability.
+
+        * ``UNKNOWN = 0``
+        * ``ENABLE = 1``
+        * ``TRANSMIT_DISABLE = 2``
+        * ``ABILITY_DETECT = 3``
+        * ``ACKNOWLEDGE_DETECT = 4``
+        * ``COMPLETE_ACKNOWLEDGE = 5``
+        * ``NEXT_PAGE_WAIT = 6``
+        * ``AN_GOOD_CHECK = 7``
+        * ``AN_GOOD = 8``
+
+
+:Example:
+    .. code-block::
+
+        # set
+        input:  0/1 PS_COMMENT [0] "this is comment"
+        output: <OK>
+
+        # get
+        input:  0/1 PS_COMMENT [0] ?
+        output: 0/1 PS_COMMENT [0] "this is comment"
