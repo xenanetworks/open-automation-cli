@@ -1,0 +1,31 @@
+# helpful example: https://github.com/github/gitignore/blob/main/Python.gitignore
+
+# files
+config.py
+*.log
+*.json
+*.v2544
+*.v3918
+*.pyc
+*.log
+*.prof
+*.2889
+.pdm.toml
+.python-version
+**/test/2889.json
+
+# folders
+**/__pycache__/
+**/.vscode
+**/.vs/**
+**/.idea/**
+**/.DS_Store/**
+**/._.DS_Store/**
+**/.mypy_cache
+**/.mytest_cache
+**/.pytest_cache
+**/*env
+**/*.egg-info
+**/build
+**/dist
+**/__pypackages__/
