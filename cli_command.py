@@ -41,6 +41,14 @@ class TailParameter:
     description: str = ''
 
     @property
+    def is_ipv4_address(self) -> bool:
+        return self.name in ('ipv4_address', 'subnet_mask', 'gateway') or 'ipv4' in self.type_in_str.lower()
+
+    @property
+    def is_int_list(self) -> bool:
+        return 'List[int]' in self.type_in_str
+
+    @property
     def cli_type(self):
         new_type = self.type_in_str
         if self.type_in_str == 'int':
@@ -49,8 +57,12 @@ class TailParameter:
             new_type = 'string'
         elif 'indices' in self.name:
             new_type = 'indices'
-        elif 'ipv4_address' in self.name:
+        elif self.is_ipv4_address:
             new_type = 'ipv4_address'
+        elif 'ipv6_address' in self.name:
+            new_type = 'ipv6_address'
+        elif self.is_int_list:
+            new_type = 'integer list'
         return new_type
 
 
@@ -102,7 +114,7 @@ def parse_command_ast(command_stmt: ast.ClassDef) -> CLICommand:
 
         if isinstance(stmt, ast.FunctionDef) and stmt.name in ('set', 'get'):
             command.enable_support_action(stmt.name)
-            docstring = extract_docstring(ast.get_docstring(stmt))
+            docstring = extract_docstring(ast.get_docstring(stmt, clean=False))
 
             for arg in stmt.args.args[1:]: # first arg must be self? skip it
                 arg_type = ''
@@ -111,7 +123,7 @@ def parse_command_ast(command_stmt: ast.ClassDef) -> CLICommand:
                     arg_type = param_info.py_type
                     description = param_info.description
                 else:
-                    logger.warning(f"docsting mssing: {command.name}, {stmt.name}, {arg.arg}")
+                    logger.warning(f"docstring mssing: {command.name}, {stmt.name}, {arg.arg}")
 
                 current_parameter = TailParameter(
                     name=arg.arg,

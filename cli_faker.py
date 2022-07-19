@@ -46,20 +46,25 @@ class CLICommandFaker:
         literal = '?L'
         if (e := self.try_get_xoa_enum_first_member(parameter.type_in_str)):
             literal = e
-        if 'ipv4' in parameter.name:
+        elif 'ipv4' in parameter.name.lower() or 'ipv4' in parameter.type_in_str.lower():
             literal = '192.168.1.100'
+        elif 'subnet_mask' in parameter.name:
+            literal = '255.255.255.0'
+        elif 'gateway' in parameter.name:
+            literal = '192.168.1.1'
         elif 'ipv6' in parameter.name:
             literal = '::1'
         elif parameter.name == 'timestamp':
             literal = '2147483647'
         elif parameter.name == 'module_ports':
-            literal = '[0, 0, 0, 1]'
-        elif 'indices' in parameter.name:
+            literal = '0 0 0 1'
+        elif parameter.is_int_list or 'indices' in parameter.name:
             literal = '0 1'
         elif parameter.type_in_str == 'int':
             literal = '1'
         elif parameter.type_in_str == 'str':
             literal = 'word'
+
         return literal
 
     def generate_tail_parameters(self, output_mode: FakerOutputMode, parameters: List[TailParameter]) -> str:
