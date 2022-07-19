@@ -46,30 +46,30 @@ class RSTMaker:
 
     def generate_actions(self, command: CLICommand):
         result = [
-            'set' if command.actions.is_set_support else '',
-            'get' if command.actions.is_get_support else '',
+            'set' if command.is_support_action_set else '',
+            'get' if command.is_support_action_get else '',
         ]
         return ', '.join(filter(None, result))
 
     def generate_syntax(self, faker: CLICommandFaker):
         result = []
-        if faker.command.actions.is_set_support:
-            result.extend(['# set', faker.syntax_set + '\n' if faker.command.actions.is_set_support else ''])
-        if faker.command.actions.is_get_support:
+        if faker.command.is_support_action_set:
+            result.extend(['# set', faker.syntax_set + '\n' if faker.command.is_support_action_set else ''])
+        if faker.command.is_support_action_get:
             result.extend(['# get', faker.syntax_get])
         return '\n    '.join(filter(None, result))
 
     def generate_example(self, faker: CLICommandFaker):
         result = []
-        if faker.command.actions.is_set_support:
+        if faker.command.is_support_action_set:
             result.extend(
                 [
                     '# set',
                     f"input:  {faker.example_set}",
-                    'output: <OK>' + '\n' if faker.command.actions.is_set_support else ''
+                    'output: <OK>' + '\n' if faker.command.is_support_action_set else ''
                 ]
             )
-        if faker.command.actions.is_get_support:
+        if faker.command.is_support_action_get:
             result.extend(
                 [
                     '# get',

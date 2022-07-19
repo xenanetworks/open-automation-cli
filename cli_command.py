@@ -55,31 +55,25 @@ class TailParameter:
 
 
 @dataclass
-class Actions:
-    is_set_support: bool = False
-    is_get_support: bool = False
-
-    def mark_method_support(self, method: str):
-        if method == 'set':
-            self.is_set_support = True
-        elif method == 'get':
-            self.is_get_support = True
-
-
-@dataclass
 class CLICommand:
     code: int = field(init=False)
     name: str = ''
     description: str = ''
-    actions: Actions = field(init=False)
+    is_support_action_set: bool = False
+    is_support_action_get: bool = False
     front_indices: FrontIndices = field(init=False)
     tail_indices: List[str] = field(default_factory=list)
     tail_parameters_get: List[TailParameter] = field(default_factory=list)
     tail_parameters_set: List[TailParameter] = field(default_factory=list)
 
     def __post_init__(self):
-        self.actions = Actions()
         self.front_indices = FrontIndices()
+
+    def enable_support_action(self, method: str):
+        if method == 'set':
+            self.is_support_action_set = True
+        elif method == 'get':
+            self.is_support_action_get = True
 
 
 class FakerOutputMode(Enum):
@@ -213,7 +207,7 @@ def parse_command_ast(command_stmt: ast.ClassDef) -> CLICommand:
                 command.tail_indices.append(variable_name[1:]) # remove '_'
 
         if isinstance(stmt, ast.FunctionDef) and stmt.name in ('set', 'get'):
-            command.actions.mark_method_support(stmt.name)
+            command.enable_support_action(stmt.name)
             docstring = extract_docstring(ast.get_docstring(stmt))
 
             for arg in stmt.args.args[1:]: # first arg must be self? skip it
