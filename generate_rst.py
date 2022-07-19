@@ -3,7 +3,8 @@ from ast import ClassDef, parse
 from glob import glob
 from loguru import logger
 from typing import Generator, List
-from cli_command import CLICommand, CLICommandFaker, parse_command_ast
+from cli_command import CLICommand, parse_command_ast
+from cli_faker import CLICommandFaker
 from astpp import pdp
 
 
