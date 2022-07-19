@@ -68,6 +68,7 @@ class Actions:
 
 @dataclass
 class CLICommand:
+    code: int = field(init=False)
     name: str = ''
     description: str = ''
     actions: Actions = field(init=False)
@@ -206,6 +207,8 @@ def parse_command_ast(command_stmt: ast.ClassDef) -> CLICommand:
             variable_name: str = getattr(stmt.target, 'id')
             if variable_name in ('_module', '_port'):
                 command.front_indices.mark_index_exist(variable_name)
+            if variable_name == 'code':
+                command.code = stmt.value.value # type: ignore
             elif 'xindex' in variable_name:
                 command.tail_indices.append(variable_name[1:]) # remove '_'
 
