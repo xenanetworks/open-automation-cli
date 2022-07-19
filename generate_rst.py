@@ -3,7 +3,8 @@ from ast import ClassDef, parse
 from glob import glob
 from loguru import logger
 from typing import Generator, List
-from cli_command import CLICommand, parse_command_ast
+from xoa_driver import enums as xoa_enums
+from cli_command import CLICommand, TailParameter, parse_command_ast
 from cli_faker import CLICommandFaker
 from astpp import pdp
 
@@ -36,14 +37,23 @@ class RSTMaker:
     def __init__(self):
         pass
 
+    def listing_parameter_enum_members(self, parameter: TailParameter) -> List[str]:
+        result = []
+        if (parameter_enum := getattr(xoa_enums, parameter.type_in_str, None)):
+            for member in parameter_enum:
+                result.append(f"    * ``{member.name} = {member.value}``")
+        return result
+
+
     def generate_parameter_description(self, command: CLICommand):
         result = []
         for param in command.tail_parameters_set:
             name_with_type = f"{param.name}: <{param.cli_type}>"
             whole_line = f"``{name_with_type}``, {param.description}\n"
             result.append(whole_line)
+            result.extend(self.listing_parameter_enum_members(param))
 
-        return '\n    '.join(result)
+        return '\n    '.join(filter(None, result))
 
     def generate_actions(self, command: CLICommand):
         result = [

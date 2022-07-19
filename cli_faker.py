@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 from typing import List
-from xoa_driver import enums as xoa_enum
+from xoa_driver import enums as xoa_enums
 from cli_command import CLICommand, TailParameter
 
 
@@ -38,7 +38,7 @@ class CLICommandFaker:
 
     def try_get_xoa_enum_first_member(self, enum_name: str) -> str:
         name = ''
-        if isinstance(enum_name, str) and ( e := getattr(xoa_enum, enum_name, None)):
+        if isinstance(enum_name, str) and ( e := getattr(xoa_enums, enum_name, None)):
             name = list(e)[0].name
         return name
 
