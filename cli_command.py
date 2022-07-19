@@ -1,11 +1,8 @@
 import ast
 from dataclasses import dataclass, field
-from enum import Enum
 from typing import Dict, List, Optional
 from loguru import logger
 from docstring_parser import parse
-from xoa_driver import enums as xoa_enum
-
 
 
 @dataclass
@@ -42,7 +39,7 @@ class TailParameter:
 
     @property
     def is_ipv4_address(self) -> bool:
-        return self.name in ('ipv4_address', 'subnet_mask', 'gateway') or 'ipv4' in self.type_in_str.lower()
+        return self.name in ('ipv4_address', 'subnet_mask', 'gateway', 'wild') or 'ipv4' in self.type_in_str.lower()
 
     @property
     def is_int_list(self) -> bool:
@@ -117,31 +114,37 @@ def parse_command_ast(command_stmt: ast.ClassDef) -> CLICommand:
             docstring = extract_docstring(ast.get_docstring(stmt, clean=False))
 
             for arg in stmt.args.args[1:]: # first arg must be self? skip it
-                arg_type = ''
+                annotation_type = docstring_type = ''
+                if (_type := getattr(arg.annotation, 'id', None)):
+                    annotation_type = _type
+
                 description = arg.arg
                 if param_info := docstring.get(arg.arg):
-                    arg_type = param_info.py_type
+                    docstring_type = param_info.py_type
+
+                    if docstring_type and docstring_type != annotation_type and '[' not in docstring_type:
+                        logger.warning(f"docstring typing not match: {command.name}, {stmt.name}, {arg.arg}: {annotation_type}({docstring_type})")
                     description = param_info.description
                 else:
                     logger.warning(f"docstring mssing: {command.name}, {stmt.name}, {arg.arg}")
 
                 current_parameter = TailParameter(
                     name=arg.arg,
-                    type_in_str=arg_type,
+                    type_in_str=annotation_type,
                     description=description
                 )
 
-                if not arg_type: # try to get type manually
-                    if isinstance(arg.annotation, ast.Name):
-                        current_parameter.type_in_str = arg.annotation.id
-                    elif not is_fake_literal_value_exists(arg.arg):
-                        logger.warning(f"literal missing: {command.name}, {stmt.name}, {arg.arg}") # for debug
-                        if isinstance(arg.annotation.slice, ast.Tuple):
-                            current_parameter.type_in_str = str(arg.annotation.slice.elts)
-                        elif isinstance(arg.annotation.slice, ast.Attribute):
-                            current_parameter.type_in_str = str(arg.annotation.slice.attr)
-                        else:
-                            current_parameter.type_in_str = f"{arg.annotation.value.attr}[{arg.annotation.slice.id}]"
+                if not annotation_type and not is_fake_literal_value_exists(arg.arg): # try to get type manually
+                    logger.warning(f"literal missing: {command.name}, {stmt.name}, {arg.arg}") # for debug
+                    if isinstance(arg.annotation.slice, ast.Tuple):
+                        current_parameter.type_in_str = str(arg.annotation.slice.elts)
+                    elif isinstance(arg.annotation.slice, ast.Attribute):
+                        current_parameter.type_in_str = str(arg.annotation.slice.attr)
+                    else:
+                        current_parameter.type_in_str = f"{arg.annotation.value.attr}[{arg.annotation.slice.id}]"
+
+                    if 'ast.' in current_parameter.type_in_str:
+                        current_parameter.type_in_str = docstring_type
 
                 tail_parameters: List[TailParameter] = getattr(command, f"tail_parameters_{stmt.name}")
                 tail_parameters.append(current_parameter)

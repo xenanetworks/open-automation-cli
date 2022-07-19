@@ -1,12 +1,10 @@
 import sys
 from ast import ClassDef, parse
 from glob import glob
-from loguru import logger
 from typing import Generator, List
 from xoa_driver import enums as xoa_enums
 from cli_command import CLICommand, TailParameter, parse_command_ast
 from cli_faker import CLICommandFaker
-from astpp import pdp
 
 
 RST_TEMPLATE = '''``{name}``

@@ -48,6 +48,8 @@ class CLICommandFaker:
             literal = e
         elif 'ipv4' in parameter.name.lower() or 'ipv4' in parameter.type_in_str.lower():
             literal = '192.168.1.100'
+        elif 'wild' == parameter.name:
+            literal = '0.0.0.0'
         elif 'subnet_mask' in parameter.name:
             literal = '255.255.255.0'
         elif 'gateway' in parameter.name:
@@ -64,7 +66,8 @@ class CLICommandFaker:
             literal = '1'
         elif parameter.type_in_str == 'str':
             literal = 'word'
-
+        elif self.command.name == 'PEF_IPV4SRCADDR' and 'value' == parameter.name:
+            literal = '0.0.0.0'
         return literal
 
     def generate_tail_parameters(self, output_mode: FakerOutputMode, parameters: List[TailParameter]) -> str:
