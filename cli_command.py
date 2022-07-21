@@ -70,6 +70,7 @@ class CLICommand:
     description: str = ''
     is_support_action_set: bool = False
     is_support_action_get: bool = False
+    is_support_push: bool = False
     front_indices: FrontIndices = field(init=False)
     tail_indices: List[str] = field(default_factory=list)
     tail_parameters_get: List[TailParameter] = field(default_factory=list)
@@ -104,8 +105,10 @@ def parse_command_ast(command_stmt: ast.ClassDef) -> CLICommand:
             variable_name: str = getattr(stmt.target, 'id')
             if variable_name in ('_module', '_port'):
                 command.front_indices.mark_index_exist(variable_name)
-            if variable_name == 'code':
+            elif variable_name == 'code':
                 command.code = stmt.value.value # type: ignore
+            elif variable_name == 'pushed':
+                command.is_support_push = stmt.value.value # type: ignore
             elif 'xindex' in variable_name:
                 command.tail_indices.append(variable_name[1:]) # remove '_'
 
