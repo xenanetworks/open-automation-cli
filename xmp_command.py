@@ -1,5 +1,4 @@
 import ast
-from cmath import log
 from collections import OrderedDict
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Union
@@ -204,7 +203,7 @@ def parse_command_ast(command_stmt: ast.ClassDef) -> XMPCommand:
             # for update (Set,Get)DataAttr
             if stmt.name == 'get' and parsed_docstring and parsed_docstring.returns:
                 get_data_description = parsed_docstring.returns.description
-            elif stmt.name == 'get':
+            elif stmt.name == 'set':
                 set_data_parameters = docstring_parameter
 
             command.methods.append(method_struct)
