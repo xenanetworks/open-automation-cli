@@ -38,7 +38,7 @@ class CLICommandFaker:
 
     def try_get_xoa_enum_first_member(self, enum_name: str) -> str:
         name = ''
-        if isinstance(enum_name, str) and ( e := getattr(xoa_enums, enum_name, None)):
+        if isinstance(enum_name, str) and ( e := getattr(xoa_enums, enum_name, None) ):
             name = list(e)[0].name
         return name
 
@@ -68,6 +68,8 @@ class CLICommandFaker:
             literal = 'word'
         elif self.command.name == 'PEF_IPV4SRCADDR' and 'value' == parameter.name:
             literal = '0.0.0.0'
+        elif parameter.type_in_str == 'List[ProtocolOption]':
+            literal = '0 1 2'
         return literal
 
     def generate_tail_parameters(self, output_mode: FakerOutputMode, parameters: List[TailParameter]) -> str:
