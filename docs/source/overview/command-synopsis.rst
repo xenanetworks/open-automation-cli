@@ -28,7 +28,7 @@ You change parameters or states of the test resources using:
     * ``owner`` (``O``): a short string used to identify an owner, used for the reservation.
     * ``address`` (``A``): a dot-separated IP address, e.g. 192.168.1.200.
 
-Some commands allow a variable number of parameters of a particular type (``I*, B*, H*``), and these are simply written with spaces in between. For hex parameters (``H*``), multiple bytes can be specified using a single ``0x`` prefix, e.g. 0xF700ABCD2233.
+Some commands allow a variable number of parameters of a particular type (``List[integer] I*, List[byte] B*, List[hex] H*``), and these are simply written with spaces in between. For hex parameters (``H*``), multiple bytes can be specified using a single ``0x`` prefix, e.g. 0xF700ABCD2233.
 
 Finally, certain commands are actually integers, but use coded names for special numeric values to enhance readability, e.g. (``0=OFF,1=ON``).
 
