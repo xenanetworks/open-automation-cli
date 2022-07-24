@@ -1173,14 +1173,14 @@ Chassis Commands
 :Parameter:
     ``offset: <integer>``, the position within the file
 
-    ``data_bytes: <string>``, the data content of a section of the file
+    ``data_bytes: <List[hex]>``, the data content of a section of the file
 
 
 :Example:
     .. code-block::
 
         # set
-        input:  C_FILEDATA 1 word
+        input:  C_FILEDATA 1 0xABCDEFABCDEFABCDEFABCDEFABCDEFABCDEFABCDEF
         output: <OK>
 
 
