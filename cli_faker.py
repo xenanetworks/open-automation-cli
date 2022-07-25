@@ -1,8 +1,9 @@
+from asyncio.log import logger
 from dataclasses import dataclass
 from enum import Enum
-from typing import List
+from typing import List, Optional
 from xoa_driver import enums as xoa_enums
-from cli_command import CLICommand, TailParameter
+from cli_command import CLICommand, FieldStruct, TailParameter
 
 
 class FakerOutputMode(Enum):
@@ -42,40 +43,66 @@ class CLICommandFaker:
             name = list(e)[0].name
         return name
 
-    def get_parameter_literal(self, parameter: TailParameter) -> str:
+    def get_parameter_literal(self, set_or_get_parameter: Optional[TailParameter] = None, DataAttr_parameter: Optional[FieldStruct] = None) -> str:
         literal = '?L'
-        if (e := self.try_get_xoa_enum_first_member(parameter.type_in_str)):
+        if set_or_get_parameter:
+            param_name = set_or_get_parameter.name
+            param_type = set_or_get_parameter.type_in_str
+        else:
+            logger.debug(DataAttr_parameter.type)
+            param_name = DataAttr_parameter.name
+            if DataAttr_parameter.enum:
+                param_type = DataAttr_parameter.enum.name
+            else:
+                param_type = DataAttr_parameter.type.lower().replace('xmp', '')
+
+        if (e := self.try_get_xoa_enum_first_member(param_type)):
             literal = e
-        elif 'ipv4' in parameter.name.lower() or 'ipv4' in parameter.type_in_str.lower():
+        elif 'ipv4' in param_name.lower() or 'ipv4' in param_type.lower():
             literal = '192.168.1.100'
-        elif 'wild' == parameter.name:
+        elif 'wild' == param_name:
             literal = '0.0.0.0'
-        elif 'subnet_mask' in parameter.name:
+        elif 'subnet_mask' in param_name:
             literal = '255.255.255.0'
-        elif 'gateway' in parameter.name:
+        elif 'gateway' in param_name:
             literal = '192.168.1.1'
-        elif 'ipv6' in parameter.name:
+        elif 'ipv6' in param_name:
             literal = '::1'
-        elif parameter.name == 'timestamp':
+        elif param_name == 'timestamp':
             literal = '2147483647'
-        elif parameter.name == 'module_ports':
+        elif param_name == 'module_ports':
             literal = '0 0 0 1'
-        elif parameter.is_int_list or 'indices' in parameter.name:
+        elif 'List[int]' in param_type or 'indices' in param_name or 'intlist' in param_type:
             literal = '0 1'
-        elif parameter.type_in_str == 'int':
+        elif param_type == 'int':
             literal = '1'
-        elif parameter.type_in_str == 'str':
-            literal = 'word'
-        elif self.command.name == 'PEF_IPV4SRCADDR' and 'value' == parameter.name:
+        elif param_type == 'str':
+            literal = 'A String'
+        elif param_type == 'long':
+            literal = '123456789123'
+        elif param_type == 'byte':
+            literal = '123'
+        elif self.command.name == 'PEF_IPV4SRCADDR' and 'value' == param_name:
             literal = '0.0.0.0'
-        elif parameter.type_in_str == 'List[ProtocolOption]':
+        elif param_type == 'List[ProtocolOption]':
             literal = '0 1 2'
         return literal
 
     def generate_tail_parameters(self, output_mode: FakerOutputMode, parameters: List[TailParameter]) -> str:
         result = []
         for param in parameters:
-            result.append(f"<{param.name}>" if output_mode.by_name else self.get_parameter_literal(param))
+            result.append(f"<{param.name}>" if output_mode.by_name else self.get_parameter_literal(set_or_get_parameter=param))
+        return ' '.join(result)
+
+    def generate_tail_parameters_from_GetDataAttr(self):
+        if not self.command.data_from_server:
+            return ''
+
+        result = []
+        logger.debug(self.command)
+        for param in self.command.data_from_server.fields:
+            logger.debug(param)
+            result.append(self.get_parameter_literal(DataAttr_parameter=param))
         return ' '.join(result)
 
     def generate_parameters_set(self, output_mode: FakerOutputMode) -> str:
@@ -112,8 +139,13 @@ class CLICommandFaker:
     def example_set(self) -> str:
         """skip checking current command is support set action
         """
-        output_mode = FakerOutputMode.EXAMPLE_LITERAL
-        return self.generate_method_example(output_mode, self.generate_parameters_set(output_mode))
+        if self.command.is_support_action_set:
+            output_mode = FakerOutputMode.EXAMPLE_LITERAL
+            return self.generate_method_example(output_mode, self.generate_parameters_set(output_mode))
+        else: # generate example from GetDataAttr field struct
+            output_mode = FakerOutputMode.EXAMPLE_LITERAL
+            return self.generate_method_example(output_mode, self.generate_tail_parameters_from_GetDataAttr())
+
 
     @property
     def example_get(self) -> str:
