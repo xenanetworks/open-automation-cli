@@ -132,24 +132,26 @@ def parse_DataAttr_field(stmt: ast.AnnAssign) -> FieldStruct:
     return field_struct
 
 def docstring_description_split_line(description: str):
-    """:return:
+    """
             - the static IP address of the chassis
             - the subnet mask of the local network segment
             - the gateway of the local network segment
-        :rtype: C_IPADDRESS.GetDataAttr
 
-        :return: the port's ARP table used to reply to incoming ARP requests.
             * IP address to match to the Target IP address in the ARP requests,
             * The prefix used for address matching,
             * Whether the target MAC address will be patched with the part of the IP address that is not masked by the prefix,
             * The target MAC address to return in the ARP reply
-        :rtype: P_ARPRXTABLE.GetDataAttr
 
-        assume line that starts with '-' or '*' is field description
+            total number of packets dropped for the flow,
+            total number of packets dropped as programmed for the flow,
+            total number of packets dropped due to bandwidth control for the flow,
+            total number of packets dropped for other reasons for the flow,
+            ratio of number of packets dropped for the flow, expressed in ppm,
+            ratio of number of packets dropped as programmed for the flow, expressed in ppm,
+            ratio of number of packets dropped due to bandwidth control for the flow, expressed in ppm,
+            ratio of number of packets dropped for other reasons for the flow, expressed in ppm.
     """
-    lines = [line.strip().replace('- ', '') for line in description.split('\n') if line and line.startswith('-')]
-    if not lines:
-        lines = [line.strip().replace('* ', '') for line in description.split('\n') if line and line.startswith('*')]
+    lines = [line.strip().replace('- ', '').replace('* ', '') for line in description.split('\n') if line]
     return lines
 
 def update_field_description(command_data_struct: CommandDataStruct, field_descriptions: Optional[Dict[str, str]], docstring_description: str):
@@ -160,8 +162,14 @@ def update_field_description(command_data_struct: CommandDataStruct, field_descr
     for i, field in enumerate(command_data_struct.fields):
         if field_descriptions:
             field.description = field_descriptions.get(field.name, field.description)
-        elif descriptions and len(docstring_description) > i - 1:
-            field.description = descriptions[i]
+        elif descriptions:
+            if len(descriptions) == 1:
+                field.description = descriptions[0]
+            else:
+                try:
+                    field.description = descriptions[i]
+                except IndexError:
+                    logger.debug(field)
         else:
             field.description = docstring_description
 
